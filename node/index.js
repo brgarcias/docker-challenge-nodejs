@@ -7,10 +7,23 @@ const port = 8080;
 const config = {
     host: "db",
     user: "root",
-    password: "bruno123",
+    password: "root",
     database: "nodedb",
 };
 const connection = mysql.createConnection(config);
+
+const createTable = () => {
+    return new Promise((resolve, reject) => {
+        const sqlCreateTable = `CREATE TABLE IF NOT EXISTS people (id int, name varchar(255))`;
+        connection.query(sqlCreateTable, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
 
 const insertName = (name) => {
     return new Promise((resolve, reject) => {
@@ -40,6 +53,8 @@ const getNames = () => {
 
 app.get("/", async (req, res) => {
     try {
+        await createTable();
+
         await insertName("Bruno");
 
         const results = await getNames();
@@ -56,7 +71,7 @@ app.get("/", async (req, res) => {
 
         res.send(message);
     } catch (error) {
-        res.status(500).send("Server error.");
+        res.status(500).send("Server error: " + error);
     }
 });
 

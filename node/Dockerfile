@@ -1,6 +1,6 @@
 FROM node:19
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/nodejs
 
 RUN apt-get update && apt-get install -y wget
 
@@ -9,4 +9,12 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
 EXPOSE 8080
+
+CMD ["node","index.js"]

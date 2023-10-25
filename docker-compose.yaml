@@ -9,18 +9,16 @@ services:
       - node-network
     ports:
       - "8080:80"
-    depends_on:
-      - nodejs
 
   nodejs:
     build:
-      context: node
+      context: ./node
     container_name: nodejs
     entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh
     networks:
       - node-network
     volumes:
-      - ./node:/usr/src/app
+      - ./node:/usr/src/nodejs
     tty: true
     depends_on:
       - db
@@ -35,7 +33,7 @@ services:
       - ./mysql:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=nodedb
-      - MYSQL_ROOT_PASSWORD=bruno123
+      - MYSQL_ROOT_PASSWORD=root
     networks:
       - node-network
 
